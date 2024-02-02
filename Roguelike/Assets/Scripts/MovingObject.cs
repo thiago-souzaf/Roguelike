@@ -5,6 +5,7 @@ public abstract class MovingObject : MonoBehaviour
 {
 	public float moveTime = .1f;
 	public LayerMask blockingLayer;
+	public bool canMove;
 
 	private BoxCollider2D boxCollider;
 	private Rigidbody2D rb;
@@ -51,7 +52,7 @@ public abstract class MovingObject : MonoBehaviour
 	protected virtual void AttemptMove<T>(int xDir, int yDir)
 		where T: Component
 	{
-        bool canMove = Move(xDir, yDir, out RaycastHit2D hit);
+        canMove = Move(xDir, yDir, out RaycastHit2D hit);
 
         if (hit.transform == null)
 		{

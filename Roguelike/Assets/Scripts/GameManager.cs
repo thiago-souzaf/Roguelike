@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,14 +20,18 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    public float startLevelDelay = 2f;
     public int playerFoodPoints = 100;
     public float turnDelay = 0.1f;
     [HideInInspector] public bool playersTurn = true;
 
+    private Text levelTxt;
+    private GameObject levelPanel;
     private BoardManager boardScript;
-	private int level = 3;
+	private int level = 1;
     private List<Enemy> enemiesList;
     private bool enemiesMoving = false;
+    private bool doingSetup;
 
     void Start()
     {
@@ -35,20 +40,42 @@ public class GameManager : MonoBehaviour
         InitGame();
     }
 
+    private void OnLevelWasLoaded(int level)
+    {
+        this.level++;
+        InitGame();
+    }
     void InitGame()
     {
+
+        doingSetup = true;
+
+        levelPanel = GameObject.Find("LevelPanel");
+        levelTxt = levelPanel.GetComponentInChildren<Text>();
+        levelTxt.text = "Day " + level;
+        levelPanel.SetActive(true);
+
+        Invoke(nameof(HideLevelPanel), startLevelDelay);
         boardScript.SetupScene(level);
         enemiesList.Clear();
     }
 
+    void HideLevelPanel()
+    {
+        levelPanel.SetActive(false);
+        doingSetup = false;
+    }
+
     public void GameOver()
     {
+        levelTxt.text = "After " + level + " days, you died.";
+        levelPanel.SetActive(true);
         enabled = false;
     }
 
     private void Update()
     {
-        if (playersTurn || enemiesMoving)
+        if (playersTurn || enemiesMoving || doingSetup)
             return;
         StartCoroutine(MoveEnemies());
     }
