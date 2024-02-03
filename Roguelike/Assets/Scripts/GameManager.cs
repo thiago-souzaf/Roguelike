@@ -32,15 +32,11 @@ public class GameManager : MonoBehaviour
     private List<Enemy> enemiesList;
     private bool enemiesMoving = false;
     private bool doingSetup;
-    private bool isFirstLevel;
+    private bool isFirstLevel = true;
 
     void Start()
     {
-        isFirstLevel = true;
-        level = 1;
-        boardScript = GetComponent<BoardManager>();
-        enemiesList = new List<Enemy>();
-        InitGame();
+        
     }
 
     private void OnLevelWasLoaded(int level)
@@ -48,6 +44,10 @@ public class GameManager : MonoBehaviour
         if (isFirstLevel)
         {
             isFirstLevel = false;
+            this.level = 1;
+            boardScript = GetComponent<BoardManager>();
+            enemiesList = new List<Enemy>();
+            InitGame();
             return;
         }
         this.level++;
