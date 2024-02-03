@@ -23,18 +23,21 @@ public class GameManager : MonoBehaviour
     public float startLevelDelay = 2f;
     public int playerFoodPoints = 100;
     public float turnDelay = 0.1f;
-    [HideInInspector] public bool playersTurn = true;
+    [HideInInspector] public bool playersTurn = false;
 
     private Text levelTxt;
     private GameObject levelPanel;
     private BoardManager boardScript;
-	private int level = 1;
+	private int level;
     private List<Enemy> enemiesList;
     private bool enemiesMoving = false;
     private bool doingSetup;
+    private bool isFirstLevel;
 
     void Start()
     {
+        isFirstLevel = true;
+        level = 1;
         boardScript = GetComponent<BoardManager>();
         enemiesList = new List<Enemy>();
         InitGame();
@@ -42,12 +45,17 @@ public class GameManager : MonoBehaviour
 
     private void OnLevelWasLoaded(int level)
     {
+        if (isFirstLevel)
+        {
+            isFirstLevel = false;
+            return;
+        }
         this.level++;
         InitGame();
     }
     void InitGame()
     {
-
+        playersTurn = false;
         doingSetup = true;
 
         levelPanel = GameObject.Find("LevelPanel");

@@ -11,12 +11,14 @@ public abstract class MovingObject : MonoBehaviour
 	private Rigidbody2D rb;
 	private float inverseMoveTime;
 
+	protected bool hasFinishedMove;
 
 	protected virtual void Start()
 	{
 		boxCollider = GetComponent<BoxCollider2D>();
 		rb = GetComponent<Rigidbody2D>();
 		inverseMoveTime = 1f / moveTime;
+		hasFinishedMove = true;
 	}
 
 	protected bool Move(int xDir, int yDir, out RaycastHit2D hit)
@@ -30,7 +32,7 @@ public abstract class MovingObject : MonoBehaviour
 
 		if (hit.transform == null)
 		{
-			StartCoroutine(SmoothMovement(end));
+            StartCoroutine(SmoothMovement(end));
 			return true;
 		}
 		return false;
@@ -38,6 +40,8 @@ public abstract class MovingObject : MonoBehaviour
 
 	protected IEnumerator SmoothMovement(Vector3 endPosition)
 	{
+
+		hasFinishedMove = false;
 		float sqrRemainingDistance = (transform.position - endPosition).sqrMagnitude;
 
 		while (sqrRemainingDistance > float.Epsilon)
@@ -47,6 +51,7 @@ public abstract class MovingObject : MonoBehaviour
 			sqrRemainingDistance = (transform.position - endPosition).sqrMagnitude;
 			yield return null;
 		}
+		hasFinishedMove = true;
 	}
 
 	protected virtual void AttemptMove<T>(int xDir, int yDir)
